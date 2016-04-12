@@ -1,0 +1,62 @@
+<Schema name="Oncase Examples">
+  <Dimension type="TimeDimension" visible="true" highCardinality="false" name="Tempo">
+    <Hierarchy visible="true" hasAll="true" primaryKey="id">
+      <Table name="tempo" schema="public">
+      </Table>
+      <Level name="Ano" visible="true" column="ano" type="Integer" uniqueMembers="false" levelType="TimeYears" hideMemberIf="Never">
+      </Level>
+      <Level name="Mes" visible="true" column="mes_numero" nameColumn="mes_abrev" type="Integer" uniqueMembers="false" levelType="TimeMonths" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Vendedor">
+    <Hierarchy visible="true" hasAll="true" primaryKey="id">
+      <Table name="vendedores" schema="public">
+      </Table>
+      <Level name="Vendedor" visible="true" column="nome" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Dimension type="StandardDimension" visible="true" highCardinality="false" name="Produto">
+    <Hierarchy visible="true" hasAll="true" primaryKey="id">
+      <Table name="produtos" schema="public">
+      </Table>
+      <Level name="Linha" visible="true" column="linha" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+      <Level name="Produto" visible="true" column="produto" type="String" uniqueMembers="false" levelType="Regular" hideMemberIf="Never">
+      </Level>
+    </Hierarchy>
+  </Dimension>
+  <Cube name="Vendas" visible="true" cache="true" enabled="true">
+    <Table name="vendas" schema="public">
+    </Table>
+    <DimensionUsage source="Tempo" name="Tempo" visible="true" foreignKey="id_tempo" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Vendedor" name="Vendedor" visible="true" foreignKey="id_vendedor" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Produto" name="Produto" visible="true" foreignKey="id_produto" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="Valor da venda" column="valor_venda" aggregator="sum" visible="true">
+    </Measure>
+  </Cube>
+  <Cube name="Compras" visible="true" cache="true" enabled="true">
+    <Table name="compras" schema="public">
+    </Table>
+    <DimensionUsage source="Tempo" name="Tempo" visible="true" foreignKey="id_tempo" highCardinality="false">
+    </DimensionUsage>
+    <DimensionUsage source="Produto" name="Produto" visible="true" foreignKey="id_produto" highCardinality="false">
+    </DimensionUsage>
+    <Measure name="Valor da compra" column="valor_compra" aggregator="sum" visible="true">
+    </Measure>
+  </Cube>
+  <VirtualCube enabled="true" name="Vendas x Compras">
+    <VirtualCubeDimension name="Tempo">
+    </VirtualCubeDimension>
+    <VirtualCubeDimension name="Produto">
+    </VirtualCubeDimension>
+    <VirtualCubeMeasure cubeName="Vendas" name="[Measures].[Valor da venda]" visible="true">
+    </VirtualCubeMeasure>
+    <VirtualCubeMeasure cubeName="Compras" name="[Measures].[Valor da compra]" visible="true">
+    </VirtualCubeMeasure>
+  </VirtualCube>
+</Schema>
